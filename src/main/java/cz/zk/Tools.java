@@ -37,7 +37,38 @@ public class Tools {
 
         return(buffer);
     }
+    /**
+     *
+     * @param id
+     * @param body
+     * @param length
+     * @param isFd
+     * @param bsr
+     * @return
+     */
+    public static byte[] ComposeMflMessage(String id, String body, int length,
+                                           boolean isFd, boolean bsr, boolean ext) {
+        byte [] buffer = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 
+        String sId = paddString(id, 8);
+        String sBody = paddString(body, 8);
+
+        buffer[0] = (byte)(getHexValue(sId.substring(6,7)) * 16 + getHexValue(sId.substring(7,8)));
+        buffer[1] = (byte)(getHexValue(sId.substring(4,5)) * 16 + getHexValue(sId.substring(5,6)));
+        buffer[2] = (byte)(getHexValue(sId.substring(2,3)) * 16 + getHexValue(sId.substring(3,4)));
+        buffer[3] = (byte)(getHexValue(sId.substring(0,1)) * 16 + getHexValue(sId.substring(1,2)));
+        buffer[3] &= 0x1f;
+        if(isFd) buffer[3] |= 0x40;
+        if(bsr) buffer[3] |= 0x20;
+        if(ext) buffer[3] |= 0x80;
+        buffer[4] = (byte)(length & 0x0f);
+        for(int i = 0; i<length; i++) {
+            int ival1 = getHexValue(body.substring(2*i,2*i+1));     // HI nibble
+            int ival2 = getHexValue(body.substring(2*i+1,2*i+2));   // LO nibble
+            buffer[5+i] = (byte)(16 * ival1 + ival2);
+        }
+        return(buffer);
+    }
     /****************************************************************************
      *
      * @param ipAddress
