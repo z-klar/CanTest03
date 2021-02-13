@@ -64,6 +64,10 @@ public class frmMain {
     private JButton btnMflSendRawMsg;
     private JCheckBox chkMflBrs;
     private JCheckBox chkMflExt;
+    private JTextField txMflRawMsgValue1;
+    private JTextField txMflRawMsgValue2;
+    private JTextField txMflMessageDelay2;
+    private JButton btnMflSendRawSequence;
 
     private ArrayList<AbtMessage> canMessages = new ArrayList<>();
     private ArrayList<AbtMessage> mflMessages = new ArrayList<>();
@@ -85,6 +89,7 @@ public class frmMain {
         canMessages.add(new AbtMessage("TOUCH_PREFIX_GLOBAL", "07A000"));
         canMessages.add(new AbtMessage("X_COORDS_PREFIX", "0001"));  // orig
 
+        mflMessages.add(new AbtMessage("END_COMMAND", "000000A3"));
         mflMessages.add(new AbtMessage("KEY_RELEASED_NO_KEY", "000001A3"));
         mflMessages.add(new AbtMessage("CONTEXT_MENU", "010001A3"));
         mflMessages.add(new AbtMessage("MENU_UP_NEXT_SCREEN", "020001A3"));
@@ -157,12 +162,8 @@ public class frmMain {
 
         btnSendMflMessage.addActionListener(e -> SendSingleMflMsg());
         btnMflSendRawMsg.addActionListener(e -> SendMflRawMsg());
-        btnMflSendSequence.addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                SendMflSequence();
-            }
-        });
+        btnMflSendSequence.addActionListener(e -> SendMflSequence());
+        btnMflSendRawSequence.addActionListener(e -> SendRawSequence());
     }
 
     private class MyListener extends MouseInputAdapter {
@@ -431,6 +432,40 @@ public class frmMain {
                 outBuff);
     }
 
+    /**
+     *
+     */
+    private void SendRawSequence() {
+        String msgBody = txMflRawMsgValue1.getText();
+        String msgId = txMflButtonsMsgId.getText();
+        int msgLen = 4;
+        byte[] outBuff = Tools.ComposeMflMessage(msgId, msgBody, msgLen, chkMflCanFD.isSelected(),
+                chkMflBrs.isSelected(), chkMflExt.isSelected());
+        logMessageString(String.format("**** SendRawSequence - #1 *****  IP addr: %s   PORT: %s",
+                txCanlancIpAddress.getText(), txCanlancPort.getText()));
+        logMessageBytes("Message sent:", outBuff);
+        int iRes = Tools.SendMessage(txCanlancIpAddress.getText(),
+                Integer.parseInt(txCanlancPort.getText()),
+                outBuff);
+
+        int delay = Integer.parseInt(txMflMessageDelay2.getText());
+        Delay(delay);
+
+        msgBody = txMflRawMsgValue2.getText();
+        msgId = txMflButtonsMsgId.getText();
+        msgLen = 4;
+        outBuff = Tools.ComposeMflMessage(msgId, msgBody, msgLen, chkMflCanFD.isSelected(),
+                chkMflBrs.isSelected(), chkMflExt.isSelected());
+        logMessageString(String.format("**** SendRawSequence - #2 *****  IP addr: %s   PORT: %s",
+                txCanlancIpAddress.getText(), txCanlancPort.getText()));
+        logMessageBytes("Message sent:", outBuff);
+        iRes = Tools.SendMessage(txCanlancIpAddress.getText(),
+                Integer.parseInt(txCanlancPort.getText()),
+                outBuff);
+
+
+    }
+
     //------------------------------------------------------------
     private void SendMessage1() {
         String msgBody = getMessageBody(cbMessageType1.getSelectedItem().toString());
@@ -607,7 +642,7 @@ public class frmMain {
         final JPanel panel2 = new JPanel();
         panel2.setLayout(new GridLayoutManager(6, 8, new Insets(0, 0, 0, 0), -1, -1));
         panel2.setForeground(new Color(-5987164));
-        tabbedPane1.addTab("Tests", panel2);
+        tabbedPane1.addTab("ABT Tests", panel2);
         final JLabel label1 = new JLabel();
         Font label1Font = this.$$$getFont$$$(null, -1, 14, label1.getFont());
         if (label1Font != null) label1.setFont(label1Font);
@@ -701,56 +736,161 @@ public class frmMain {
         lbMousePosition.setText("N/A");
         panel2.add(lbMousePosition, new GridConstraints(5, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel3 = new JPanel();
-        panel3.setLayout(new GridLayoutManager(5, 3, new Insets(0, 0, 0, 0), -1, -1));
-        panel3.setForeground(new Color(-6513508));
-        tabbedPane1.addTab("Configuration", panel3);
+        panel3.setLayout(new GridLayoutManager(6, 7, new Insets(0, 0, 0, 0), -1, -1));
+        tabbedPane1.addTab("MFL Buttons", panel3);
         final JLabel label8 = new JLabel();
-        label8.setText("CanLANc IP Address:");
+        label8.setText("MFL Buttons Message ID:");
         panel3.add(label8, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer3 = new Spacer();
-        panel3.add(spacer3, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        panel3.add(spacer3, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        txMflButtonsMsgId = new JTextField();
+        Font txMflButtonsMsgIdFont = this.$$$getFont$$$(null, -1, 14, txMflButtonsMsgId.getFont());
+        if (txMflButtonsMsgIdFont != null) txMflButtonsMsgId.setFont(txMflButtonsMsgIdFont);
+        txMflButtonsMsgId.setText("5BF");
+        panel3.add(txMflButtonsMsgId, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        final JLabel label9 = new JLabel();
+        Font label9Font = this.$$$getFont$$$(null, -1, 14, label9.getFont());
+        if (label9Font != null) label9.setFont(label9Font);
+        label9.setText("Message Type:");
+        panel3.add(label9, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        cbMflMsgType = new JComboBox();
+        panel3.add(cbMflMsgType, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label10 = new JLabel();
+        Font label10Font = this.$$$getFont$$$(null, -1, 14, label10.getFont());
+        if (label10Font != null) label10.setFont(label10Font);
+        label10.setText("Message Type 1:");
+        panel3.add(label10, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        cbMflMessage1 = new JComboBox();
+        panel3.add(cbMflMessage1, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label11 = new JLabel();
+        Font label11Font = this.$$$getFont$$$(null, -1, 14, label11.getFont());
+        if (label11Font != null) label11.setFont(label11Font);
+        label11.setText("Delay [ms]:");
+        panel3.add(label11, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        txMflMessageDelay = new JTextField();
+        Font txMflMessageDelayFont = this.$$$getFont$$$(null, -1, 14, txMflMessageDelay.getFont());
+        if (txMflMessageDelayFont != null) txMflMessageDelay.setFont(txMflMessageDelayFont);
+        txMflMessageDelay.setText("100");
+        panel3.add(txMflMessageDelay, new GridConstraints(2, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(169, 30), null, 0, false));
+        final JLabel label12 = new JLabel();
+        Font label12Font = this.$$$getFont$$$(null, -1, 14, label12.getFont());
+        if (label12Font != null) label12.setFont(label12Font);
+        label12.setText("Message Type 2:");
+        panel3.add(label12, new GridConstraints(2, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        cbMflMessage2 = new JComboBox();
+        panel3.add(cbMflMessage2, new GridConstraints(2, 5, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        btnMflSendSequence = new JButton();
+        btnMflSendSequence.setText("Send Message");
+        panel3.add(btnMflSendSequence, new GridConstraints(2, 6, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        chkMflCanFD = new JCheckBox();
+        chkMflCanFD.setText("CAN FD");
+        panel3.add(chkMflCanFD, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label13 = new JLabel();
+        Font label13Font = this.$$$getFont$$$(null, -1, 14, label13.getFont());
+        if (label13Font != null) label13.setFont(label13Font);
+        label13.setText("Raw Message Value:");
+        panel3.add(label13, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        txMflRawMsgValue = new JTextField();
+        Font txMflRawMsgValueFont = this.$$$getFont$$$(null, -1, 14, txMflRawMsgValue.getFont());
+        if (txMflRawMsgValueFont != null) txMflRawMsgValue.setFont(txMflRawMsgValueFont);
+        txMflRawMsgValue.setText("00112233");
+        panel3.add(txMflRawMsgValue, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(169, 30), null, 0, false));
+        btnSendMflMessage = new JButton();
+        btnSendMflMessage.setText("Send Message");
+        panel3.add(btnSendMflMessage, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        btnMflSendRawMsg = new JButton();
+        btnMflSendRawMsg.setText("Send Message");
+        panel3.add(btnMflSendRawMsg, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        chkMflBrs = new JCheckBox();
+        chkMflBrs.setText("BRS");
+        panel3.add(chkMflBrs, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        chkMflExt = new JCheckBox();
+        chkMflExt.setText("EXT");
+        panel3.add(chkMflExt, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label14 = new JLabel();
+        Font label14Font = this.$$$getFont$$$(null, -1, 14, label14.getFont());
+        if (label14Font != null) label14.setFont(label14Font);
+        label14.setText("Raw Message Value:");
+        panel3.add(label14, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        txMflRawMsgValue1 = new JTextField();
+        Font txMflRawMsgValue1Font = this.$$$getFont$$$(null, -1, 14, txMflRawMsgValue1.getFont());
+        if (txMflRawMsgValue1Font != null) txMflRawMsgValue1.setFont(txMflRawMsgValue1Font);
+        txMflRawMsgValue1.setText("00112233");
+        panel3.add(txMflRawMsgValue1, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(169, 30), null, 0, false));
+        final JLabel label15 = new JLabel();
+        Font label15Font = this.$$$getFont$$$(null, -1, 14, label15.getFont());
+        if (label15Font != null) label15.setFont(label15Font);
+        label15.setText("Delay [ms]:");
+        panel3.add(label15, new GridConstraints(4, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        txMflMessageDelay2 = new JTextField();
+        Font txMflMessageDelay2Font = this.$$$getFont$$$(null, -1, 14, txMflMessageDelay2.getFont());
+        if (txMflMessageDelay2Font != null) txMflMessageDelay2.setFont(txMflMessageDelay2Font);
+        txMflMessageDelay2.setText("100");
+        panel3.add(txMflMessageDelay2, new GridConstraints(4, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(169, 30), null, 0, false));
+        final JLabel label16 = new JLabel();
+        Font label16Font = this.$$$getFont$$$(null, -1, 14, label16.getFont());
+        if (label16Font != null) label16.setFont(label16Font);
+        label16.setText("Raw Message Value:");
+        panel3.add(label16, new GridConstraints(4, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        txMflRawMsgValue2 = new JTextField();
+        Font txMflRawMsgValue2Font = this.$$$getFont$$$(null, -1, 14, txMflRawMsgValue2.getFont());
+        if (txMflRawMsgValue2Font != null) txMflRawMsgValue2.setFont(txMflRawMsgValue2Font);
+        txMflRawMsgValue2.setText("00112233");
+        panel3.add(txMflRawMsgValue2, new GridConstraints(4, 5, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(169, 30), null, 0, false));
+        btnMflSendRawSequence = new JButton();
+        btnMflSendRawSequence.setText("Send Message");
+        panel3.add(btnMflSendRawSequence, new GridConstraints(4, 6, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JPanel panel4 = new JPanel();
+        panel4.setLayout(new GridLayoutManager(5, 3, new Insets(0, 0, 0, 0), -1, -1));
+        panel4.setForeground(new Color(-6513508));
+        tabbedPane1.addTab("Configuration", panel4);
+        final JLabel label17 = new JLabel();
+        label17.setText("CanLANc IP Address:");
+        panel4.add(label17, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final Spacer spacer4 = new Spacer();
+        panel4.add(spacer4, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         txCanlancIpAddress = new JTextField();
         Font txCanlancIpAddressFont = this.$$$getFont$$$(null, -1, 14, txCanlancIpAddress.getFont());
         if (txCanlancIpAddressFont != null) txCanlancIpAddress.setFont(txCanlancIpAddressFont);
         txCanlancIpAddress.setText("192.168.4.10");
-        panel3.add(txCanlancIpAddress, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        final JLabel label9 = new JLabel();
-        label9.setText("CanLANc PORT:");
-        panel3.add(label9, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel4.add(txCanlancIpAddress, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        final JLabel label18 = new JLabel();
+        label18.setText("CanLANc PORT:");
+        panel4.add(label18, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         txCanlancPort = new JTextField();
         Font txCanlancPortFont = this.$$$getFont$$$(null, -1, 14, txCanlancPort.getFont());
         if (txCanlancPortFont != null) txCanlancPort.setFont(txCanlancPortFont);
         txCanlancPort.setText("7777");
-        panel3.add(txCanlancPort, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        final JLabel label10 = new JLabel();
-        label10.setText("ABT Message ID:");
-        panel3.add(label10, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel4.add(txCanlancPort, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        final JLabel label19 = new JLabel();
+        label19.setText("ABT Message ID:");
+        panel4.add(label19, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         txAbtMessageId = new JTextField();
         Font txAbtMessageIdFont = this.$$$getFont$$$(null, -1, 14, txAbtMessageId.getFont());
         if (txAbtMessageIdFont != null) txAbtMessageId.setFont(txAbtMessageIdFont);
         txAbtMessageId.setText("17F8F173");
-        panel3.add(txAbtMessageId, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        final JLabel label11 = new JLabel();
-        label11.setText("SW Version:");
-        panel3.add(label11, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final Spacer spacer4 = new Spacer();
-        panel3.add(spacer4, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        panel4.add(txAbtMessageId, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        final JLabel label20 = new JLabel();
+        label20.setText("SW Version:");
+        panel4.add(label20, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final Spacer spacer5 = new Spacer();
+        panel4.add(spacer5, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final JTextField textField1 = new JTextField();
         textField1.setEditable(false);
         Font textField1Font = this.$$$getFont$$$(null, -1, 14, textField1.getFont());
         if (textField1Font != null) textField1.setFont(textField1Font);
-        textField1.setText("1.0.1.0");
-        panel3.add(textField1, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        final JPanel panel4 = new JPanel();
-        panel4.setLayout(new GridLayoutManager(2, 3, new Insets(0, 0, 0, 0), -1, -1));
-        tabbedPane1.addTab("Logger", panel4);
+        textField1.setText("1.0.2.0");
+        panel4.add(textField1, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        final JPanel panel5 = new JPanel();
+        panel5.setLayout(new GridLayoutManager(2, 3, new Insets(0, 0, 0, 0), -1, -1));
+        tabbedPane1.addTab("Logger", panel5);
         btnClearLog = new JButton();
         btnClearLog.setText("Clear");
-        panel4.add(btnClearLog, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final Spacer spacer5 = new Spacer();
-        panel4.add(spacer5, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        panel5.add(btnClearLog, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final Spacer spacer6 = new Spacer();
+        panel5.add(spacer6, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         final JScrollPane scrollPane1 = new JScrollPane();
-        panel4.add(scrollPane1, new GridConstraints(1, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        panel5.add(scrollPane1, new GridConstraints(1, 0, 1, 3, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         lbLog = new JList();
         Font lbLogFont = this.$$$getFont$$$("Courier New", -1, 14, lbLog.getFont());
         if (lbLogFont != null) lbLog.setFont(lbLogFont);
@@ -758,97 +898,25 @@ public class frmMain {
         btnSaveLog = new JButton();
         btnSaveLog.setText("Save Log");
         btnSaveLog.setToolTipText("Save the log to the CAN.LOG file");
-        panel4.add(btnSaveLog, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final JPanel panel5 = new JPanel();
-        panel5.setLayout(new GridLayoutManager(2, 5, new Insets(0, 0, 0, 0), -1, -1));
-        tabbedPane1.addTab("UDP Tests", panel5);
-        final JLabel label12 = new JLabel();
-        label12.setText("Number of repetitions:");
-        panel5.add(label12, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final Spacer spacer6 = new Spacer();
-        panel5.add(spacer6, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        panel5.add(btnSaveLog, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JPanel panel6 = new JPanel();
+        panel6.setLayout(new GridLayoutManager(2, 5, new Insets(0, 0, 0, 0), -1, -1));
+        tabbedPane1.addTab("UDP Tests", panel6);
+        final JLabel label21 = new JLabel();
+        label21.setText("Number of repetitions:");
+        panel6.add(label21, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer7 = new Spacer();
-        panel5.add(spacer7, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        panel6.add(spacer7, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
+        final Spacer spacer8 = new Spacer();
+        panel6.add(spacer8, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         txUdpRepetitionsNo = new JTextField();
         txUdpRepetitionsNo.setText("100");
-        panel5.add(txUdpRepetitionsNo, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        panel6.add(txUdpRepetitionsNo, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         btnRunUdpTests = new JButton();
         btnRunUdpTests.setText("Run Tests !");
-        panel5.add(btnRunUdpTests, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel6.add(btnRunUdpTests, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         txUdpResult = new JTextField();
-        panel5.add(txUdpResult, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        final JPanel panel6 = new JPanel();
-        panel6.setLayout(new GridLayoutManager(5, 7, new Insets(0, 0, 0, 0), -1, -1));
-        tabbedPane1.addTab("MFL Buttons", panel6);
-        final JLabel label13 = new JLabel();
-        label13.setText("MFL Buttons Message ID:");
-        panel6.add(label13, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final Spacer spacer8 = new Spacer();
-        panel6.add(spacer8, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        txMflButtonsMsgId = new JTextField();
-        Font txMflButtonsMsgIdFont = this.$$$getFont$$$(null, -1, 14, txMflButtonsMsgId.getFont());
-        if (txMflButtonsMsgIdFont != null) txMflButtonsMsgId.setFont(txMflButtonsMsgIdFont);
-        txMflButtonsMsgId.setText("5BF");
-        panel6.add(txMflButtonsMsgId, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        final JLabel label14 = new JLabel();
-        Font label14Font = this.$$$getFont$$$(null, -1, 14, label14.getFont());
-        if (label14Font != null) label14.setFont(label14Font);
-        label14.setText("Message Type:");
-        panel6.add(label14, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        cbMflMsgType = new JComboBox();
-        panel6.add(cbMflMsgType, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final JLabel label15 = new JLabel();
-        Font label15Font = this.$$$getFont$$$(null, -1, 14, label15.getFont());
-        if (label15Font != null) label15.setFont(label15Font);
-        label15.setText("Message Type 1:");
-        panel6.add(label15, new GridConstraints(2, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        cbMflMessage1 = new JComboBox();
-        panel6.add(cbMflMessage1, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final JLabel label16 = new JLabel();
-        Font label16Font = this.$$$getFont$$$(null, -1, 14, label16.getFont());
-        if (label16Font != null) label16.setFont(label16Font);
-        label16.setText("Delay [ms]:");
-        panel6.add(label16, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        txMflMessageDelay = new JTextField();
-        Font txMflMessageDelayFont = this.$$$getFont$$$(null, -1, 14, txMflMessageDelay.getFont());
-        if (txMflMessageDelayFont != null) txMflMessageDelay.setFont(txMflMessageDelayFont);
-        txMflMessageDelay.setText("100");
-        panel6.add(txMflMessageDelay, new GridConstraints(2, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(169, 30), null, 0, false));
-        final JLabel label17 = new JLabel();
-        Font label17Font = this.$$$getFont$$$(null, -1, 14, label17.getFont());
-        if (label17Font != null) label17.setFont(label17Font);
-        label17.setText("Message Type 2:");
-        panel6.add(label17, new GridConstraints(2, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        cbMflMessage2 = new JComboBox();
-        panel6.add(cbMflMessage2, new GridConstraints(2, 5, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        btnMflSendSequence = new JButton();
-        btnMflSendSequence.setText("Send Message");
-        panel6.add(btnMflSendSequence, new GridConstraints(2, 6, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        chkMflCanFD = new JCheckBox();
-        chkMflCanFD.setText("CAN FD");
-        panel6.add(chkMflCanFD, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        final JLabel label18 = new JLabel();
-        Font label18Font = this.$$$getFont$$$(null, -1, 14, label18.getFont());
-        if (label18Font != null) label18.setFont(label18Font);
-        label18.setText("Raw Message Value:");
-        panel6.add(label18, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        txMflRawMsgValue = new JTextField();
-        Font txMflRawMsgValueFont = this.$$$getFont$$$(null, -1, 14, txMflRawMsgValue.getFont());
-        if (txMflRawMsgValueFont != null) txMflRawMsgValue.setFont(txMflRawMsgValueFont);
-        txMflRawMsgValue.setText("00112233");
-        panel6.add(txMflRawMsgValue, new GridConstraints(3, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(169, 30), null, 0, false));
-        btnSendMflMessage = new JButton();
-        btnSendMflMessage.setText("Send Message");
-        panel6.add(btnSendMflMessage, new GridConstraints(1, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        btnMflSendRawMsg = new JButton();
-        btnMflSendRawMsg.setText("Send Message");
-        panel6.add(btnMflSendRawMsg, new GridConstraints(3, 2, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        chkMflBrs = new JCheckBox();
-        chkMflBrs.setText("BRS");
-        panel6.add(chkMflBrs, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        chkMflExt = new JCheckBox();
-        chkMflExt.setText("EXT");
-        panel6.add(chkMflExt, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        panel6.add(txUdpResult, new GridConstraints(0, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
     }
 
     /**
