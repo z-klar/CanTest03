@@ -75,6 +75,7 @@ public class frmMain {
 
     public frmMain() {
         $$$setupUI$$$();
+
         canMessages.add(new AbtMessage("HOME_PRESSED", "04306601AAAAAAAA"));
         canMessages.add(new AbtMessage("HOME_RELEASED", "04306600AAAAAAAA"));
         canMessages.add(new AbtMessage("MENU_PRESSED", "04301A0100AAAAAA"));
@@ -164,6 +165,8 @@ public class frmMain {
         btnMflSendRawMsg.addActionListener(e -> SendMflRawMsg());
         btnMflSendSequence.addActionListener(e -> SendMflSequence());
         btnMflSendRawSequence.addActionListener(e -> SendRawSequence());
+
+        btnSaveLog.addActionListener(e -> SaveLog());
     }
 
     private class MyListener extends MouseInputAdapter {
