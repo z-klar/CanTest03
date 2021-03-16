@@ -76,6 +76,7 @@ public class frmMain {
     private JCheckBox chkIcas4Fd;
     private JCheckBox chkIcas4Ext;
     private JCheckBox chkIcas4Bsr;
+    private JCheckBox chkIcas4SendUpdate;
 
     private final ArrayList<AbtMessage> canMessages = new ArrayList<>();
     private final ArrayList<AbtMessage> mflMessages = new ArrayList<>();
@@ -139,7 +140,7 @@ public class frmMain {
 
         icas4Messages.add(new AbtMessage("PRE_TOUCH_PRESS", "11"));
         icas4Messages.add(new AbtMessage("PRE_TOUCH_RELEASE", "10"));
-        icas4Messages.add(new AbtMessage("PRE_TOUCH_UPDATE", "10"));
+        icas4Messages.add(new AbtMessage("PRE_TOUCH_UPDATE", "11"));
         icas4Messages.add(new AbtMessage("POST_TOUCH_PRESS", "FD"));
         icas4Messages.add(new AbtMessage("POST_TOUCH_RELEASE", "FE"));
         icas4Messages.add(new AbtMessage("POST_TOUCH_UPDATE", "FF"));
@@ -343,10 +344,12 @@ public class frmMain {
                 chkIcas4Fd.isSelected(), chkIcas4Bsr.isSelected(), chkIcas4Ext.isSelected());
         iRes = Tools.SendMessageWithLog(txCanlancIpAddress.getText(),
                 Integer.parseInt(txCanlancPort.getText()), txBuff, dlmLog);
-        txBuff = icas4.ComposeIcas4Message(x, y, "UPDATE", msgId,
-                chkIcas4Fd.isSelected(), chkIcas4Bsr.isSelected(), chkIcas4Ext.isSelected());
-        iRes = Tools.SendMessageWithLog(txCanlancIpAddress.getText(),
-                Integer.parseInt(txCanlancPort.getText()), txBuff, dlmLog);
+        if(chkIcas4SendUpdate.isSelected()) {
+            txBuff = icas4.ComposeIcas4Message(x, y, "UPDATE", msgId,
+                    chkIcas4Fd.isSelected(), chkIcas4Bsr.isSelected(), chkIcas4Ext.isSelected());
+            iRes = Tools.SendMessageWithLog(txCanlancIpAddress.getText(),
+                    Integer.parseInt(txCanlancPort.getText()), txBuff, dlmLog);
+        }
     }
 
     /**

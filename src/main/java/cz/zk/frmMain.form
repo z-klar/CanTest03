@@ -541,6 +541,15 @@
                   <text value="EXT"/>
                 </properties>
               </component>
+              <component id="1dfed" class="javax.swing.JCheckBox" binding="chkIcas4SendUpdate">
+                <constraints>
+                  <grid row="1" column="3" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                </constraints>
+                <properties>
+                  <selected value="true"/>
+                  <text value="Send UPDATE Message"/>
+                </properties>
+              </component>
             </children>
           </grid>
           <grid id="f9c5a" layout-manager="GridLayoutManager" row-count="5" column-count="3" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
@@ -637,7 +646,7 @@
                 <properties>
                   <editable value="false"/>
                   <font size="14"/>
-                  <text value="1.0.3.0"/>
+                  <text value="1.0.3.1"/>
                 </properties>
               </component>
             </children>
