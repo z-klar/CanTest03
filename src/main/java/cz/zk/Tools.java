@@ -11,6 +11,7 @@ public class Tools {
     private static String [] hexChars = {"0","1","2","3","4","5","6","7",
                                          "8","9","A","B","C","D","E","F"};
 
+
     /************************************************************************
      *
      * @param id
@@ -80,14 +81,6 @@ public class Tools {
         DatagramSocket socket;
         InetAddress address;
 
-/*
-        logujem("Data: " + data[0] + " " + data[1] + " " + data[2] + " " +
-                "" + data[3] + " " + data[4] + " " + data[5] + " " +
-                "" + data[6] + " " + data[7] + " " + data[8] + " " +
-                "" + data[9]+ " " + data[10] + " " + data[11]);
-*/
-
-
         try {
             socket = new DatagramSocket();
             address = InetAddress.getByName(ipAddress);
@@ -102,6 +95,40 @@ public class Tools {
         }
     }
 
+    /**
+     *
+     * @param ipAddress
+     * @param port
+     * @param data
+     * @param dlm
+     * @return
+     */
+    public static int SendMessageWithLog(String ipAddress, int port, byte [] data, DefaultListModel<String> dlm) {
+        DatagramSocket socket;
+        InetAddress address;
+
+        String sData = "";
+        for(int i=0; i<data.length; i++)
+            sData += String.format("%02X ", data[i]);
+        dlm.addElement(String.format("SendMsg:  Addr=%s  Port=%d  Data=[%s]",
+                ipAddress, port, sData));
+        try {
+            socket = new DatagramSocket();
+            address = InetAddress.getByName(ipAddress);
+
+            DatagramPacket packet = new DatagramPacket(data, data.length, address, port);
+            socket.send(packet);
+            return(0);
+        }
+        catch (Exception ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+            return(1);
+        }
+    }
+    /**
+     *
+     * @param msg
+     */
     private static  void logujem (String msg) {
 
         try {
@@ -112,7 +139,6 @@ public class Tools {
         catch(IOException e) {
 
         }
-
         JOptionPane.showMessageDialog(null, msg);
     }
 
