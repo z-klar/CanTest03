@@ -637,7 +637,7 @@
                 <properties>
                   <editable value="false"/>
                   <font size="14"/>
-                  <text value="1.0.2.0"/>
+                  <text value="1.0.3.0"/>
                 </properties>
               </component>
             </children>

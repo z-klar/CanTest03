@@ -949,7 +949,7 @@ public class frmMain {
         textField1.setEditable(false);
         Font textField1Font = this.$$$getFont$$$(null, -1, 14, textField1.getFont());
         if (textField1Font != null) textField1.setFont(textField1Font);
-        textField1.setText("1.0.2.0");
+        textField1.setText("1.0.3.0");
         panel5.add(textField1, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         final JPanel panel6 = new JPanel();
         panel6.setLayout(new GridLayoutManager(2, 3, new Insets(0, 0, 0, 0), -1, -1));
