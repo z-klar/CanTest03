@@ -80,6 +80,7 @@ public class frmMain {
     private JCheckBox chkIcas4SendUpdate;
     private JTextArea notesIPAddressCanLANcTextArea;
     private JTextField txIcas4Delay;
+    private JCheckBox chkIcas4SendReleaseMessage;
 
     private final ArrayList<AbtMessage> canMessages = new ArrayList<>();
     private final ArrayList<AbtMessage> mflMessages = new ArrayList<>();
@@ -354,11 +355,13 @@ public class frmMain {
                 chkIcas4Fd.isSelected(), chkIcas4Bsr.isSelected(), chkIcas4Ext.isSelected());
         int iRes = Tools.SendMessageWithLog(txCanlancIpAddress.getText(),
                 Integer.parseInt(txCanlancPort.getText()), txBuff, dlmLog);
-        if (delay > 0) Delay(delay);
-        txBuff = icas4.ComposeIcas4Message(x, y, "RELEASE", msgId,
-                chkIcas4Fd.isSelected(), chkIcas4Bsr.isSelected(), chkIcas4Ext.isSelected());
-        iRes = Tools.SendMessageWithLog(txCanlancIpAddress.getText(),
-                Integer.parseInt(txCanlancPort.getText()), txBuff, dlmLog);
+        if (chkIcas4SendReleaseMessage.isSelected()) {
+            if (delay > 0) Delay(delay);
+            txBuff = icas4.ComposeIcas4Message(x, y, "RELEASE", msgId,
+                    chkIcas4Fd.isSelected(), chkIcas4Bsr.isSelected(), chkIcas4Ext.isSelected());
+            iRes = Tools.SendMessageWithLog(txCanlancIpAddress.getText(),
+                    Integer.parseInt(txCanlancPort.getText()), txBuff, dlmLog);
+        }
         if (chkIcas4SendUpdate.isSelected()) {
             if (delay > 0) Delay(delay);
             txBuff = icas4.ComposeIcas4Message(x, y, "UPDATE", msgId,
@@ -768,7 +771,7 @@ public class frmMain {
         btnSimulateTouch.setText("Simulate Touch");
         panel2.add(btnSimulateTouch, new GridConstraints(2, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JLabel label7 = new JLabel();
-        label7.setText("Version: 1.0.4");
+        label7.setText("Version: 1.0.4.2");
         panel2.add(label7, new GridConstraints(5, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         btnHome = new JButton();
         Font btnHomeFont = this.$$$getFont$$$(null, Font.BOLD, 18, btnHome.getFont());
@@ -901,16 +904,16 @@ public class frmMain {
         btnMflSendRawSequence.setText("Send Message");
         panel3.add(btnMflSendRawSequence, new GridConstraints(4, 6, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel4 = new JPanel();
-        panel4.setLayout(new GridLayoutManager(5, 5, new Insets(0, 0, 0, 0), -1, -1));
+        panel4.setLayout(new GridLayoutManager(7, 5, new Insets(0, 0, 0, 0), -1, -1));
         tabbedPane1.addTab("ICAS Touches", panel4);
         final JLabel label17 = new JLabel();
-        label17.setText("X Coordinate:");
+        label17.setText("X Coordinate (WIDTH):");
         panel4.add(label17, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         txIcas4X = new JTextField();
         txIcas4X.setText("0");
         panel4.add(txIcas4X, new GridConstraints(0, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         final JLabel label18 = new JLabel();
-        label18.setText("Y Coordinate:");
+        label18.setText("Y Coordinate (HEIGHT):");
         panel4.add(label18, new GridConstraints(0, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         txIcas4Y = new JTextField();
         txIcas4Y.setText("0");
@@ -930,14 +933,9 @@ public class frmMain {
         chkIcas4Ext.setText("EXT");
         chkIcas4Ext.setToolTipText("Set the Error State Indicator bit");
         panel4.add(chkIcas4Ext, new GridConstraints(2, 2, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
-        chkIcas4SendUpdate = new JCheckBox();
-        chkIcas4SendUpdate.setSelected(true);
-        chkIcas4SendUpdate.setText("Send UPDATE Message");
-        chkIcas4SendUpdate.setToolTipText("Send the UPDATE message at the end (for MQB37W and ICAS3 only)");
-        panel4.add(chkIcas4SendUpdate, new GridConstraints(2, 3, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel5 = new JPanel();
         panel5.setLayout(new GridLayoutManager(1, 1, new Insets(5, 5, 5, 5), -1, -1));
-        panel4.add(panel5, new GridConstraints(4, 0, 1, 5, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
+        panel4.add(panel5, new GridConstraints(6, 0, 1, 5, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, null, null, null, 0, false));
         panel5.setBorder(BorderFactory.createTitledBorder(BorderFactory.createRaisedBevelBorder(), null, TitledBorder.DEFAULT_JUSTIFICATION, TitledBorder.DEFAULT_POSITION, this.$$$getFont$$$(null, -1, -1, panel5.getFont()), null));
         notesIPAddressCanLANcTextArea = new JTextArea();
         Font notesIPAddressCanLANcTextAreaFont = this.$$$getFont$$$("Courier New", -1, 12, notesIPAddressCanLANcTextArea.getFont());
@@ -946,15 +944,25 @@ public class frmMain {
         notesIPAddressCanLANcTextArea.setText("Notes:\n- IP address & CanLANc port is shared from Configuration Tab\n");
         panel5.add(notesIPAddressCanLANcTextArea, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_BOTH, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_WANT_GROW, null, new Dimension(150, 50), null, 0, false));
         final Spacer spacer4 = new Spacer();
-        panel4.add(spacer4, new GridConstraints(3, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
+        panel4.add(spacer4, new GridConstraints(5, 3, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
         final JLabel label19 = new JLabel();
         label19.setText("Delay between messages [ms]");
         panel4.add(label19, new GridConstraints(1, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         txIcas4Delay = new JTextField();
         txIcas4Delay.setText("20");
         panel4.add(txIcas4Delay, new GridConstraints(1, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
+        chkIcas4SendUpdate = new JCheckBox();
+        chkIcas4SendUpdate.setSelected(true);
+        chkIcas4SendUpdate.setText("Send UPDATE Message");
+        chkIcas4SendUpdate.setToolTipText("Send the UPDATE message at the end (for MQB37W and ICAS3 only)");
+        panel4.add(chkIcas4SendUpdate, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        chkIcas4SendReleaseMessage = new JCheckBox();
+        chkIcas4SendReleaseMessage.setSelected(true);
+        chkIcas4SendReleaseMessage.setText("Send RELEASE Message");
+        chkIcas4SendReleaseMessage.setToolTipText("Send the UPDATE message at the end (for MQB37W and ICAS3 only)");
+        panel4.add(chkIcas4SendReleaseMessage, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_CAN_SHRINK | GridConstraints.SIZEPOLICY_CAN_GROW, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final JPanel panel6 = new JPanel();
-        panel6.setLayout(new GridLayoutManager(5, 3, new Insets(0, 0, 0, 0), -1, -1));
+        panel6.setLayout(new GridLayoutManager(4, 3, new Insets(0, 0, 0, 0), -1, -1));
         panel6.setForeground(new Color(-6513508));
         tabbedPane1.addTab("Configuration", panel6);
         final JLabel label20 = new JLabel();
@@ -983,17 +991,8 @@ public class frmMain {
         if (txAbtMessageIdFont != null) txAbtMessageId.setFont(txAbtMessageIdFont);
         txAbtMessageId.setText("17F8F173");
         panel6.add(txAbtMessageId, new GridConstraints(2, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
-        final JLabel label23 = new JLabel();
-        label23.setText("SW Version:");
-        panel6.add(label23, new GridConstraints(4, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer6 = new Spacer();
         panel6.add(spacer6, new GridConstraints(3, 0, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_VERTICAL, 1, GridConstraints.SIZEPOLICY_WANT_GROW, null, null, null, 0, false));
-        final JTextField textField1 = new JTextField();
-        textField1.setEditable(false);
-        Font textField1Font = this.$$$getFont$$$(null, -1, 14, textField1.getFont());
-        if (textField1Font != null) textField1.setFont(textField1Font);
-        textField1.setText("1.0.4.0");
-        panel6.add(textField1, new GridConstraints(4, 1, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, GridConstraints.SIZEPOLICY_FIXED, null, new Dimension(150, -1), null, 0, false));
         final JPanel panel7 = new JPanel();
         panel7.setLayout(new GridLayoutManager(2, 3, new Insets(0, 0, 0, 0), -1, -1));
         tabbedPane1.addTab("Logger", panel7);
@@ -1015,9 +1014,9 @@ public class frmMain {
         final JPanel panel8 = new JPanel();
         panel8.setLayout(new GridLayoutManager(2, 5, new Insets(0, 0, 0, 0), -1, -1));
         tabbedPane1.addTab("UDP Tests", panel8);
-        final JLabel label24 = new JLabel();
-        label24.setText("Number of repetitions:");
-        panel8.add(label24, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
+        final JLabel label23 = new JLabel();
+        label23.setText("Number of repetitions:");
+        panel8.add(label23, new GridConstraints(0, 0, 1, 1, GridConstraints.ANCHOR_WEST, GridConstraints.FILL_NONE, GridConstraints.SIZEPOLICY_FIXED, GridConstraints.SIZEPOLICY_FIXED, null, null, null, 0, false));
         final Spacer spacer8 = new Spacer();
         panel8.add(spacer8, new GridConstraints(0, 4, 1, 1, GridConstraints.ANCHOR_CENTER, GridConstraints.FILL_HORIZONTAL, GridConstraints.SIZEPOLICY_WANT_GROW, 1, null, null, null, 0, false));
         final Spacer spacer9 = new Spacer();

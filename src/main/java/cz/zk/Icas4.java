@@ -28,7 +28,7 @@ public class Icas4 {
 
         String sId = Tools.paddString(id, 8);
         int ourx = x / 2;
-        int oury = y / 2;
+        int oury = y;
 
         outBuffer[0] = (byte) (getHexValue(sId.substring(6, 7)) * 16 + getHexValue(sId.substring(7, 8)));
         outBuffer[1] = (byte) (getHexValue(sId.substring(4, 5)) * 16 + getHexValue(sId.substring(5, 6)));
