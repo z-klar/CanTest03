@@ -4,7 +4,7 @@ plugins {
 }
 
 group 'cz.zk'
-version '1.0.2'
+version '1.0.4'
 
 configurations {
     compileOnly {
