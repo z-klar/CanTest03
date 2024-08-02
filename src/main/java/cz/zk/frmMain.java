@@ -4,9 +4,12 @@ import com.intellij.uiDesigner.core.GridConstraints;
 import com.intellij.uiDesigner.core.GridLayoutManager;
 import com.intellij.uiDesigner.core.Spacer;
 import cz.zk.comm_tools.CanlancCommTools;
+import cz.zk.comm_tools.CommunicationTools;
 import cz.zk.comm_tools.CommonCommTools;
+import cz.zk.comm_tools.PeakHsCommTools;
 import cz.zk.init.InitData;
 import cz.zk.init.InitGui;
+import cz.zk.tools.CommonTools;
 import cz.zk.tools.Logging;
 import cz.zk.uitools.MyListener;
 
@@ -16,17 +19,10 @@ import javax.swing.plaf.FontUIResource;
 import javax.swing.text.StyleContext;
 import java.awt.*;
 
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Locale;
-
-import static cz.zk.Tools.getHexValue;
 
 
 public class frmMain {
@@ -110,6 +106,9 @@ public class frmMain {
     public final Logging logging = new Logging(this);
     public final CanlancCommTools canlancCommTools = new CanlancCommTools(this);
     public final CommonCommTools commonCommTools = new CommonCommTools(this);
+    public final CommonTools commonTools = new CommonTools(this);
+    public final PeakHsCommTools peakHsCommTools = new PeakHsCommTools(this);
+    public final CommunicationTools communicationTools = new CommunicationTools(this);
 
     public frmMain() {
         $$$setupUI$$$();
@@ -144,7 +143,9 @@ public class frmMain {
     }
 
     /**
-     *
+     *  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+     *  !!!!!!   Hardcoded SendMessage() from CanCommTools !!!!!!
+     *  !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
      */
     private void RunUdpTests() {
 
@@ -156,7 +157,7 @@ public class frmMain {
         int opak = Integer.parseInt(txUdpRepetitionsNo.getText());
         start = LocalDateTime.now();
         for (int i = 0; i < opak; i++) {
-            Tools.SendMessage(ipAddr, port, buffer);
+            canlancCommTools.SendMessage(ipAddr, port, buffer);
         }
         end = LocalDateTime.now();
         long milliseconds = ChronoUnit.MILLIS.between(start, end);

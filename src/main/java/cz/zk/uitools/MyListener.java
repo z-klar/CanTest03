@@ -58,19 +58,13 @@ public class MyListener  extends MouseInputAdapter {
                 String.format("Real / ABT: X = %f / %f   Y = %f / %f ",
                                       coordX, finalX, coordY, finalY));
         */
-        SimulateTouch((int) finalX, (int) finalY);
+        parent.commonCommTools.SimulateTouch((int) finalX, (int) finalY);
     }
 
     public void SimulateTouch() {
         int x = Integer.parseInt(parent.txXCoord.getText());
         int y = Integer.parseInt(parent.txYCoord.getText());
-        SimulateTouch(x, y);
+        parent.commonCommTools.SimulateTouch(x, y);
     }
 
-    private void SimulateTouch(int x, int y) {
-
-        if(parent.cbCanCoverterType.getSelectedIndex() == 0) {  // CAN lanc
-            parent.canlancCommTools.SimulateTouch(x, y);
-        }
-    }
 }

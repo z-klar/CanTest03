@@ -3,8 +3,6 @@ package cz.zk;
 import javax.swing.*;
 import java.util.ArrayList;
 
-import static cz.zk.Tools.getHexValue;
-
 public class Icas4 {
 
     private ArrayList<AbtMessage> icas4Messages = new ArrayList<>();
@@ -26,6 +24,7 @@ public class Icas4 {
                                        boolean isFd, boolean bsr, boolean ext) {
         byte[] outBuffer = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
+        /*
         String sId = Tools.paddString(id, 8);
         int ourx = x / 2;
         int oury = y;
@@ -60,6 +59,9 @@ public class Icas4 {
         logMessageString(String.format("ComposeIcas4Msg: ID=%s TYPE=%s  X=%d  Y=%d  ",
                 id, type, x, y));
         logMessageBytesRaw(outBuffer);
+
+
+         */
 
         return outBuffer;
     }

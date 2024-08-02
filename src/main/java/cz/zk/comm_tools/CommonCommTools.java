@@ -159,5 +159,18 @@ public class CommonCommTools {
         }
     }
 
+    public void SimulateTouch(int x, int y) {
+        int index = parent.cbCanCoverterType.getSelectedIndex();
+        switch (index) {
+            case 0:    // CANlanc
+                parent.canlancCommTools.SimulateTouch(x, y);
+                break;
+            case 1:
+
+                break;
+        }
 
     }
+
+
+}
