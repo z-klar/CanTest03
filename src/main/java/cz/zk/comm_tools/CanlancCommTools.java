@@ -304,7 +304,7 @@ public class CanlancCommTools {
     }
 
     public void SendMessage1() {
-        String msgBody = getMessageBody(parent.cbMessageType1.getSelectedItem().toString());
+        String msgBody = parent.commonTools.getMessageBody(parent.cbMessageType1.getSelectedItem().toString());
         if (msgBody.length() == 0) {
             JOptionPane.showMessageDialog(null, "Message not found !!!!!");
             return;
@@ -328,20 +328,20 @@ public class CanlancCommTools {
      * @param length
      * @return
      ************************************************************************/
-    public static byte[] ComposeMessage(String id, String body, int length) {
+    private byte[] ComposeMessage(String id, String body, int length) {
         byte [] buffer = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-        String sId = paddString(id, 8);
-        String sBody = paddString(body, 16);
+        String sId = parent.commonTools.paddString(id, 8);
+        String sBody = parent.commonTools.paddString(body, 16);
 
-        buffer[0] = (byte)(getHexValue(sId.substring(6,7)) * 16 + getHexValue(sId.substring(7,8)));
-        buffer[1] = (byte)(getHexValue(sId.substring(4,5)) * 16 + getHexValue(sId.substring(5,6)));
-        buffer[2] = (byte)(getHexValue(sId.substring(2,3)) * 16 + getHexValue(sId.substring(3,4)));
-        buffer[3] = (byte)(getHexValue(sId.substring(0,1)) * 16 + getHexValue(sId.substring(1,2)));
+        buffer[0] = (byte)(parent.commonTools.getHexValue(sId.substring(6,7)) * 16 + parent.commonTools.getHexValue(sId.substring(7,8)));
+        buffer[1] = (byte)(parent.commonTools.getHexValue(sId.substring(4,5)) * 16 + parent.commonTools.getHexValue(sId.substring(5,6)));
+        buffer[2] = (byte)(parent.commonTools.getHexValue(sId.substring(2,3)) * 16 + parent.commonTools.getHexValue(sId.substring(3,4)));
+        buffer[3] = (byte)(parent.commonTools.getHexValue(sId.substring(0,1)) * 16 + parent.commonTools.getHexValue(sId.substring(1,2)));
         buffer[4] = (byte)(length & 0x0f);
         for(int i = 0; i<length; i++) {
-            int ival1 = getHexValue(body.substring(2*i,2*i+1));     // HI nibble
-            int ival2 = getHexValue(body.substring(2*i+1,2*i+2));   // LO nibble
+            int ival1 = parent.commonTools.getHexValue(body.substring(2*i,2*i+1));     // HI nibble
+            int ival2 = parent.commonTools.getHexValue(body.substring(2*i+1,2*i+2));   // LO nibble
             buffer[5+i] = (byte)(16 * ival1 + ival2);
         }
 
@@ -356,25 +356,25 @@ public class CanlancCommTools {
      * @param bsr
      * @return
      */
-    public static byte[] ComposeMflMessage(String id, String body, int length,
+    public byte[] ComposeMflMessage(String id, String body, int length,
                                            boolean isFd, boolean bsr, boolean ext) {
         byte [] buffer = {0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-        String sId = paddString(id, 8);
-        String sBody = paddString(body, 8);
+        String sId = parent.commonTools.paddString(id, 8);
+        String sBody = parent.commonTools.paddString(body, 8);
 
-        buffer[0] = (byte)(getHexValue(sId.substring(6,7)) * 16 + getHexValue(sId.substring(7,8)));
-        buffer[1] = (byte)(getHexValue(sId.substring(4,5)) * 16 + getHexValue(sId.substring(5,6)));
-        buffer[2] = (byte)(getHexValue(sId.substring(2,3)) * 16 + getHexValue(sId.substring(3,4)));
-        buffer[3] = (byte)(getHexValue(sId.substring(0,1)) * 16 + getHexValue(sId.substring(1,2)));
+        buffer[0] = (byte)(parent.commonTools.getHexValue(sId.substring(6,7)) * 16 + parent.commonTools.getHexValue(sId.substring(7,8)));
+        buffer[1] = (byte)(parent.commonTools.getHexValue(sId.substring(4,5)) * 16 + parent.commonTools.getHexValue(sId.substring(5,6)));
+        buffer[2] = (byte)(parent.commonTools.getHexValue(sId.substring(2,3)) * 16 + parent.commonTools.getHexValue(sId.substring(3,4)));
+        buffer[3] = (byte)(parent.commonTools.getHexValue(sId.substring(0,1)) * 16 + parent.commonTools.getHexValue(sId.substring(1,2)));
         buffer[3] &= 0x1f;
         if(isFd) buffer[3] |= 0x40;
         if(bsr) buffer[3] |= 0x20;
         if(ext) buffer[3] |= 0x80;
         buffer[4] = (byte)(length & 0x0f);
         for(int i = 0; i<length; i++) {
-            int ival1 = getHexValue(body.substring(2*i,2*i+1));     // HI nibble
-            int ival2 = getHexValue(body.substring(2*i+1,2*i+2));   // LO nibble
+            int ival1 = parent.commonTools.getHexValue(body.substring(2*i,2*i+1));     // HI nibble
+            int ival2 = parent.commonTools.getHexValue(body.substring(2*i+1,2*i+2));   // LO nibble
             buffer[5+i] = (byte)(16 * ival1 + ival2);
         }
         return(buffer);
@@ -386,7 +386,7 @@ public class CanlancCommTools {
      * @param data
      * @return
      ****************************************************************************/
-    public static int SendMessage(String ipAddress, int port, byte [] data) {
+    public  int SendMessage(String ipAddress, int port, byte [] data) {
         DatagramSocket socket;
         InetAddress address;
 
@@ -456,12 +456,12 @@ public class CanlancCommTools {
      * @param literal
      * @return
      */
-    public static int convertWord(String literal) {
-        String spom = paddString(literal, 4);
-        int ipom = 4096 * getHexValue(spom.substring(0,1));
-        ipom += 256 * getHexValue(spom.substring(1,2));
-        ipom += 16 * getHexValue(spom.substring(2,3));
-        ipom += getHexValue(spom.substring(3));
+    public int convertWord(String literal) {
+        String spom = parent.commonTools.paddString(literal, 4);
+        int ipom = 4096 * parent.commonTools.getHexValue(spom.substring(0,1));
+        ipom += 256 * parent.commonTools.getHexValue(spom.substring(1,2));
+        ipom += 16 * parent.commonTools.getHexValue(spom.substring(2,3));
+        ipom += parent.commonTools.getHexValue(spom.substring(3));
         return(ipom);
     }
 

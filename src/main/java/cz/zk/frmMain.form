@@ -901,7 +901,7 @@
                   </component>
                   <component id="ad3fd" class="javax.swing.JLabel">
                     <constraints>
-                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text value="CanLANc PORT:"/>
@@ -920,7 +920,7 @@
                   </component>
                   <component id="ab437" class="javax.swing.JLabel">
                     <constraints>
-                      <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="2" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text value="ABT Message ID:"/>
@@ -960,7 +960,7 @@
                   </component>
                   <component id="711a2" class="javax.swing.JLabel">
                     <constraints>
-                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text value="CanLANc PORT:"/>
@@ -1008,9 +1008,11 @@
                 <children>
                   <component id="6b0b3" class="javax.swing.JLabel">
                     <constraints>
-                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
+                      <horizontalAlignment value="4"/>
+                      <horizontalTextPosition value="4"/>
                       <text value="Version:"/>
                     </properties>
                   </component>
@@ -1028,12 +1030,12 @@
                     <properties>
                       <editable value="false"/>
                       <font size="14"/>
-                      <text value="1.2.0.0"/>
+                      <text value="1.2.1.0"/>
                     </properties>
                   </component>
                   <component id="9d4d4" class="javax.swing.JLabel">
                     <constraints>
-                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="8" fill="0" indent="0" use-parent-layout="false"/>
+                      <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="0" anchor="4" fill="0" indent="0" use-parent-layout="false"/>
                     </constraints>
                     <properties>
                       <text value="Build Date:"/>
@@ -1048,7 +1050,7 @@
                     <properties>
                       <editable value="false"/>
                       <font size="14"/>
-                      <text value="2024-08-02"/>
+                      <text value="2024-08-03"/>
                     </properties>
                   </component>
                 </children>

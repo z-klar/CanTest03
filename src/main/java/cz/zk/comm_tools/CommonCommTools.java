@@ -166,7 +166,7 @@ public class CommonCommTools {
                 parent.canlancCommTools.SimulateTouch(x, y);
                 break;
             case 1:
-
+                parent.peakHsCommTools.SimulateTouch(x, y);
                 break;
         }
 

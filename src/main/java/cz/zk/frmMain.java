@@ -173,7 +173,7 @@ public class frmMain {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.pack();
         frame.setVisible(true);
-        frame.setSize(1300, 800);
+        frame.setSize(1400, 800);
     }
 
     /**
